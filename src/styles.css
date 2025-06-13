@@ -1,0 +1,228 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+#chathead {
+    cursor: pointer;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #021e1f;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+#chathead img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+#chathead:hover {
+    transform: scale(1.1);
+}
+
+#chathead:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px 5px rgba(96, 237, 247, 0.7); /* Adjust the color and spread to match your design */
+}
+
+#chatbox {
+    display: none;
+    flex-direction: column;
+    width: 300px;
+    height: 400px;
+    background-image: url("bg.jpg");
+    background-color: rgb(96, 237, 247);
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(96, 237, 247, 0.8), 0 0 30px rgba(96, 237, 247, 0.6), 0 0 40px rgba(96, 237, 247, 0.4);
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 999;
+    transition: box-shadow 0.3s ease;
+}
+
+#chatbox-header {
+    padding: 10px;
+    background-color: #0d3747;
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#chatbox-header div {
+    display: flex;
+    gap: 5px;
+}
+
+#minimize-button, #clear-button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#minimize-button {
+    background-color: #6c757d;
+}
+
+#chatbox-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto; 
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scrollbar-width: thin; 
+    scrollbar-color: #0d3747 #f4f4f4;
+}
+#chatbox-messages::-webkit-scrollbar {
+    width: 8px; 
+}
+#chatbox-messages::-webkit-scrollbar {
+    width: 8px; 
+}
+#chatbox-messages::-webkit-scrollbar-thumb {
+    background: #0d3747; 
+    border-radius: 10px;
+}
+
+#chatbox-messages::-webkit-scrollbar-thumb:hover {
+    background: #12445c; 
+}
+.message {
+    max-width: 70%;
+    padding: 10px;
+    border-radius: 10px;
+    word-wrap: break-word;
+}
+
+.user-message {
+    align-self: flex-end;
+    background-color: #12445c;
+    color: white;
+}
+
+.bot-message {
+    align-self: flex-start;
+    color: white;
+}
+
+#chatbox-input {
+    display: flex;
+    padding: 5px 5px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#user-input {
+    flex: 1;
+    padding: 5px;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    background-color: transparent;
+    color: #333;
+}
+
+#send-button {
+    padding: 1px 7px;
+    background-color: #04afb5;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-items: center;
+}
+
+#send-button:hover {
+    background-color: #056b6f;
+}
+
+#send-button img {
+    align-self: center;
+    width: 32px;
+    height: 25px;
+    align-items: center;
+}
+
+/* Typing indicator styles */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 5px;
+    margin-left: 10px;
+    padding: 10px;
+    background-color: #e0e0e0;
+    border-radius: 15px;
+    width: fit-content;
+    max-width: 70%;
+}
+
+.typing-indicator span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #999;
+    border-radius: 50%;
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: translateY(0);
+    }
+    30% {
+        transform: translateY(-6px);
+    }
+}
+
+.timestamp {
+    font-size: 0.75em;
+    color: #666; 
+    margin-top: 4px;
+    text-align: right; 
+}
+
+.bot-message .timestamp {
+    text-align: left; 
+}
+.message-content {
+    word-wrap: break-word;
+}

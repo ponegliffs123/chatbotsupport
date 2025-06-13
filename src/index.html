@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="chathead">
+        <img src="xterium1.png" alt="Chatbot Logo">
+    </div>
+
+    <div id="chatbox">
+        <div id="chatbox-header">
+            <span>Chatbot</span>
+            <div>
+                <button id="minimize-button"><b>−</b></button>
+                <button id="clear-button"><b>Clear</b></button>
+            </div>
+        </div>
+        <div id="chatbox-messages"></div>
+        <div id="chatbox-input">
+            <input type="text" id="user-input" placeholder="Type a message here...">
+            <button id="send-button"><img src="send_4414831.png" alt="" ></button>
+        </div>
+    </div>
+
+    <script>
+        const chathead = document.getElementById('chathead');
+        const chatbox = document.getElementById('chatbox');
+        const chatboxMessages = document.getElementById('chatbox-messages');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const clearButton = document.getElementById('clear-button');
+        const minimizeButton = document.getElementById('minimize-button');
+
+        const token = 'jina_821a154c29d74af48b22cbbd7cb40c03mqKDgkZOAFqAY_6Vm8p6mL0424ux'; // Replace with your actual token
+        const socket = new WebSocket(`wss://sme-api.jina.bot/api/llm/connect-socket/?token=${token}`);
+
+        let buffer = '';
+
+        socket.onopen = () => {
+            console.log('WebSocket connection established');
+        };
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+
+            if (data.chat_message && data.chat_message.role === 'assistant') {
+                const lastUserMessage = chatboxMessages.querySelector('.user-message:last-child');
+                if (lastUserMessage) {
+                    const typingIndicator = document.createElement('div');
+                    typingIndicator.className = 'typing-indicator';
+                    typingIndicator.innerHTML = `
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    `;
+                    lastUserMessage.insertAdjacentElement('afterend', typingIndicator);
+                    scrollToBottom();
+                }
+
+                buffer += data.chat_message.content;
+
+                if (data.done) {
+                    appendMessage('bot', buffer);
+                    buffer = '';
+                    const typingIndicator = chatboxMessages.querySelector('.typing-indicator');
+                    if (typingIndicator) {
+                        typingIndicator.remove();
+                    }
+                    scrollToBottom();
+                }
+            }
+        };
+
+        socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+
+        socket.onclose = () => {
+            console.log('WebSocket connection closed');
+        };
+
+        chathead.addEventListener('click', () => {
+            if (chatbox.style.display === 'none' || chatbox.style.display === '') {
+                chatbox.style.display = 'flex'; // Show the chat-box if it's hidden
+            } else {
+                chatbox.style.display = 'none'; // Hide the chat-box if it's visible
+            }
+        });
+
+        minimizeButton.addEventListener('click', () => {
+            chatbox.style.display = 'none'; // Hide the chat-box when minimized
+        });
+
+        userInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message) {
+                appendMessage('user', message);
+                userInput.value = '';
+
+                const messageObject = {
+                    chat_message: {
+                        content: message,
+                        role: 'user',
+                        use_agent: false,
+                    },
+                    conversation_id: '',
+                    user_id: '',
+                    virtual_assistant_id: '675958338882c8208677486c',
+                };
+
+                if (socket.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify(messageObject));
+                } else {
+                    console.error('WebSocket is not open. Unable to send message.');
+                }
+                scrollToBottom();
+            }
+        }
+
+        sendButton.addEventListener('click', sendMessage);
+
+        clearButton.addEventListener('click', () => {
+            chatboxMessages.innerHTML = '';
+            fetch('http://localhost:3000/clear-conversation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+            })
+            .catch(error => {
+                console.error('Error clearing conversation:', error);
+            });
+        });
+
+        function appendMessage(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.textContent = message;
+            messageElement.className = `message ${sender}-message`;
+            chatboxMessages.appendChild(messageElement);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            chatboxMessages.scrollTop = chatboxMessages.scrollHeight;
+        }
+        
+function getTimestamp() {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0'); 
+    const minutes = String(now.getMinutes()).padStart(2, '0'); 
+    return `${hours}:${minutes}`;
+}
+
+
+function appendMessage(sender, message) {
+    const messageElement = document.createElement('div');
+    messageElement.className = `message ${sender}-message`;
+
+    const messageContent = document.createElement('div');
+    messageContent.className = 'message-content';
+    messageContent.textContent = message;
+
+    const timestampElement = document.createElement('div');
+    timestampElement.className = 'timestamp';
+    timestampElement.textContent = getTimestamp();
+
+    messageElement.appendChild(messageContent);
+    messageElement.appendChild(timestampElement);
+    chatboxMessages.appendChild(messageElement);
+
+    scrollToBottom();
+}
+    </script>
+</body>
+</html>
